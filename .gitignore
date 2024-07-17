@@ -1,0 +1,5 @@
+
+
+# And not their .gitignore files
+/frontend/.gitignore
+/paradise-book-reader/.gitignore
