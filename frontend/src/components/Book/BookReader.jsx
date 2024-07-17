@@ -61,7 +61,7 @@ const BookReader = () => {
     if (book) {
       applyHighlights();
     }
-  }, [book, applyHighlights]);
+  }, [book, highlights, applyHighlights]);
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
@@ -106,6 +106,7 @@ const BookReader = () => {
       alert("Failed to add word to dictionary");
     }
   };
+
   const addToHighlights = async () => {
     try {
       const selection = window.getSelection();
@@ -120,8 +121,7 @@ const BookReader = () => {
         paragraphElement.parentElement.children
       ).indexOf(paragraphElement);
 
-      const response = await api.post("/books/highlights", {
-        bookId: id,
+      const response = await api.post(`/books/${id}/highlights`, {
         chapter: "Chapter 1", // You might need to implement chapter detection
         paragraphIndex,
         startOffset: range.startOffset,

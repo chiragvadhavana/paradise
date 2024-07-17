@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
-import "./BookList.css"; 
+import "./BookList.css";
+
 const BookList = () => {
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
@@ -66,10 +67,15 @@ const BookList = () => {
 
       {selectedBook && (
         <div className="highlights-modal">
-          <h3>Highlights for {books.find(b => b._id === selectedBook)?.title}</h3>
+          <h3>
+            Highlights for {books.find((b) => b._id === selectedBook)?.title}
+          </h3>
           <ul>
             {highlights.map((highlight, index) => (
-              <li key={index}>{highlight.text}</li>
+              <li key={index}>
+                <p>Chapter: {highlight.chapter}</p>
+                <p>Text: {highlight.text}</p>
+              </li>
             ))}
           </ul>
           <button onClick={() => setSelectedBook(null)}>Close</button>

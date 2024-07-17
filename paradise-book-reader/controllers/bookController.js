@@ -24,8 +24,8 @@ exports.uploadBook = [
 
 exports.addHighlight = async (req, res) => {
   try {
-    const { bookId, chapter, paragraphIndex, startOffset, endOffset, text } =
-      req.body;
+    const bookId = req.params.bookId;
+    const { chapter, paragraphIndex, startOffset, endOffset, text } = req.body;
     const highlight = new Highlight({
       book: bookId,
       chapter,
@@ -69,18 +69,6 @@ exports.getBooks = async (req, res) => {
       .json({ error: "Failed to fetch books", details: error.message });
   }
 };
-
-// exports.getBookById = async (req, res) => {
-//   try {
-//     const book = await Book.findById(req.params.bookId);
-//     if (!book) {
-//       return res.status(404).json({ error: "Book not found" });
-//     }
-//     res.json(book);
-//   } catch (error) {
-//     res.status(500).json({ error: "Error fetching book" });
-//   }
-// };
 
 exports.getBookById = async (req, res) => {
   try {

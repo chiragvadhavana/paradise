@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.post("/upload", authMiddleware, uploadBook);
 router.post("/highlights", authMiddleware, addHighlight);
+router.post("/:bookId/highlights", authMiddleware, addHighlight);
 router.get("/", authMiddleware, getBooks);
 router.get("/:bookId/highlights", authMiddleware, getHighlights);
 router.get("/:bookId", authMiddleware, getBookById);
