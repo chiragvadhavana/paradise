@@ -12,7 +12,7 @@ const BookReader = () => {
   const bookContentRef = useRef(null);
 
   useEffect(() => {
-    const fetchBookAndHighlights = async () => {
+    const addInitialHighlights = async () => {
       try {
         const [bookResponse, highlightsResponse] = await Promise.all([
           api.get(`/books/${id}`),
@@ -21,7 +21,6 @@ const BookReader = () => {
 
         const bookData = bookResponse.data;
 
-        // Extract only the body content
         const parser = new DOMParser();
         const doc = parser.parseFromString(bookData.htmlContent, "text/html");
         const bodyContent = doc.body.innerHTML;
@@ -33,11 +32,11 @@ const BookReader = () => {
 
         setHighlights(highlightsResponse.data);
       } catch (error) {
-        console.error("Error fetching book or highlights", error);
+        console.error("can't show initial highlights in book reader", error);
       }
     };
 
-    fetchBookAndHighlights();
+    addInitialHighlights();
   }, [id]);
 
   const applyHighlights = useCallback(() => {
@@ -81,7 +80,7 @@ const BookReader = () => {
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
       );
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`error from word fetch api ${response.status}`);
       }
       const data = await response.json();
       const meaning =
@@ -89,8 +88,8 @@ const BookReader = () => {
         "No definition found";
       setDictionaryResult(meaning);
     } catch (error) {
-      console.error("Error fetching dictionary data", error);
-      setDictionaryResult("Unable to fetch definition");
+      console.error("can't fetch dictionary data", error);
+      setDictionaryResult("failed to fetch definition");
     }
   };
 
@@ -100,10 +99,10 @@ const BookReader = () => {
         word: selectedText,
         meaning: dictionaryResult,
       });
-      alert("Word added to dictionary!");
+      alert("add in your dictionary");
     } catch (error) {
-      console.error("Error adding word to dictionary", error);
-      alert("Failed to add word to dictionary");
+      console.error("error adding word to dictionary", error);
+      alert("failed to add word to dictionary");
     }
   };
 
@@ -114,7 +113,7 @@ const BookReader = () => {
       const startContainer = range.startContainer;
       const paragraphElement = startContainer.parentElement.closest("p");
       if (!paragraphElement) {
-        console.warn("Unable to find paragraph element for highlight");
+        console.warn("can't find closest paragraph element");
         return;
       }
       const paragraphIndex = Array.from(
@@ -134,17 +133,14 @@ const BookReader = () => {
           ...prevHighlights,
           response.data.highlight,
         ]);
-        applyHighlights(); // Apply highlights immediately after adding
-        alert("Highlight added!");
+        applyHighlights();
+        alert("highlight added");
       } else {
-        console.warn(
-          "Invalid highlight data received from server:",
-          response.data
-        );
+        console.warn("invalid highlihgt data", response.data);
       }
     } catch (error) {
-      console.error("Error saving highlight", error);
-      alert("Failed to add highlight");
+      console.error("can't save highlight in bookreader", error);
+      alert("failed to add highlight");
     }
   };
 
