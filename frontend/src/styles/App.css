@@ -54,7 +54,7 @@ button {
 button:hover {
   background-color: #0056b3;
 }
-
+/* 
 .highlight {
   display: inline;
   background-color: yellow;
@@ -84,4 +84,4 @@ button:hover {
 
 .book-content::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
+} */

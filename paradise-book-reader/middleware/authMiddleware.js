@@ -5,16 +5,18 @@ const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.header("Authorization");
     if (!authHeader) {
-      throw new Error("Authorization header is missing");
+      throw new Error("auth header not found");
     }
 
     const token = authHeader.replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded Token:", decoded);
+    console.log("decoded token:", decoded);
 
     const user = await User.findOne({
       _id: decoded._id,
-      "tokens.token": token,
+      "tokens.token": token, 
+      // picking up one token from the multiple token.
+      //i've added list of tokens in mongofb. at paradise/user/token 
     });
 
     console.log("User found:", user);
@@ -29,13 +31,12 @@ const authMiddleware = async (req, res, next) => {
   } catch (error) {
     res
       .status(401)
-      .send({ error: "Please authenticate.", details: error.message });
+      .send({ error: "not authenticated.", details: error.message });
   }
 };
 
 module.exports = authMiddleware;
 
-// // authMiddleware.js
 // const jwt = require("jsonwebtoken");
 // const User = require("../models/User");
 

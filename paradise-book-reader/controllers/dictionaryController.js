@@ -24,12 +24,10 @@ exports.addDictionaryEntry = async (req, res) => {
       meaning,
     });
     await entry.save();
-    res
-      .status(201)
-      .json({ message: "Dictionary entry added successfully", entry });
+    res.status(201).json({ message: "word meaning entry added", entry });
   } catch (error) {
     res.status(500).json({
-      error: "Dictionary entry addition failed",
+      error: "error while adding the word to dictionary",
       details: error.message,
     });
   }

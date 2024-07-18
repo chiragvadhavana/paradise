@@ -122,7 +122,7 @@ const BookReader = () => {
       ).indexOf(paragraphElement);
 
       const response = await api.post(`/books/${id}/highlights`, {
-        chapter: "Chapter 1", // You might need to implement chapter detection
+        chapter: "Chapter",
         paragraphIndex,
         startOffset: range.startOffset,
         endOffset: range.endOffset,
@@ -149,7 +149,6 @@ const BookReader = () => {
   };
 
   if (!book) return <div>Loading...</div>;
-
   return (
     <div className="book-reader">
       <h1>{book.title}</h1>
@@ -160,18 +159,20 @@ const BookReader = () => {
         dangerouslySetInnerHTML={{ __html: book.htmlContent }}
       />
       {selectedText && (
-        <div className="selection-actions">
-          {selectedText.split(" ").length === 1 ? (
-            <button onClick={addToDictionary}>Add to Dictionary</button>
-          ) : (
-            <button onClick={addToHighlights}>Add to Highlights</button>
+        <div className="selection-popup">
+          <div className="selection-actions">
+            {selectedText.split(" ").length === 1 ? (
+              <button onClick={addToDictionary}>Add to Dictionary</button>
+            ) : (
+              <button onClick={addToHighlights}>Add to Highlights</button>
+            )}
+          </div>
+          {dictionaryResult && (
+            <div className="dictionary-result">
+              <h3>{selectedText}</h3>
+              <p>{dictionaryResult}</p>
+            </div>
           )}
-        </div>
-      )}
-      {dictionaryResult && (
-        <div className="dictionary-popup">
-          <h3>{selectedText}</h3>
-          <p>{dictionaryResult}</p>
         </div>
       )}
     </div>

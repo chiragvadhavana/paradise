@@ -16,10 +16,9 @@ const BookList = () => {
         const response = await api.get("/books");
         setBooks(response.data);
       } catch (error) {
-        console.error("Error fetching books", error);
+        console.error("can't fetch books in booklist file", error);
       }
     };
-
     fetchBooks();
   }, []);
 
@@ -29,7 +28,7 @@ const BookList = () => {
       setHighlights(response.data);
       setSelectedBook(bookId);
     } catch (error) {
-      console.error("Error fetching highlights", error);
+      console.error("can't fetch highlights in booklist", error);
     }
   };
 
@@ -39,7 +38,7 @@ const BookList = () => {
       setDictionary(response.data);
       setShowDictionary(true);
     } catch (error) {
-      console.error("Error fetching dictionary", error);
+      console.error("error fetching dictionary", error);
     }
   };
 
@@ -49,9 +48,9 @@ const BookList = () => {
       <button className="dictionary-button" onClick={handleShowDictionary}>
         My Dictionary
       </button>
-      <ul className="book-list">
+      <div className="book-grid">
         {books.map((book) => (
-          <li key={book._id} className="book-item">
+          <div key={book._id} className="book-item">
             <Link to={`/books/${book._id}`} className="book-title">
               {book.title}
             </Link>
@@ -61,38 +60,40 @@ const BookList = () => {
             >
               Show Highlights
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
-
+      </div>
       {selectedBook && (
-        <div className="highlights-modal">
-          <h3>
-            Highlights for {books.find((b) => b._id === selectedBook)?.title}
-          </h3>
-          <ul>
-            {highlights.map((highlight, index) => (
-              <li key={index}>
-                <p>Chapter: {highlight.chapter}</p>
-                <p>Text: {highlight.text}</p>
-              </li>
-            ))}
-          </ul>
-          <button onClick={() => setSelectedBook(null)}>Close</button>
+        <div className="modal">
+          <div className="modal-content">
+            <h3>
+              Highlights for {books.find((b) => b._id === selectedBook)?.title}
+            </h3>
+            <ul>
+              {highlights.map((highlight, index) => (
+                <li key={index}>
+                  {/* <p>Chapter: {highlight.chapter}</p> */}
+                  <p>Text: {highlight.text}</p>
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setSelectedBook(null)}>Close</button>
+          </div>
         </div>
       )}
-
       {showDictionary && (
-        <div className="dictionary-modal">
-          <h3>My Dictionary</h3>
-          <ul>
-            {dictionary.map((entry, index) => (
-              <li key={index}>
-                <strong>{entry.word}:</strong> {entry.meaning}
-              </li>
-            ))}
-          </ul>
-          <button onClick={() => setShowDictionary(false)}>Close</button>
+        <div className="modal">
+          <div className="modal-content">
+            <h3>My Dictionary</h3>
+            <ul>
+              {dictionary.map((entry, index) => (
+                <li key={index}>
+                  <strong>{entry.word}:</strong> {entry.meaning}
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => setShowDictionary(false)}>Close</button>
+          </div>
         </div>
       )}
     </div>

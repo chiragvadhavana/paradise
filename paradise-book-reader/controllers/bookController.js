@@ -13,11 +13,9 @@ exports.uploadBook = [
       const htmlContent = req.file.buffer.toString();
       const book = new Book({ user: req.user._id, title, htmlContent });
       await book.save();
-      res.status(201).json({ message: "Book uploaded successfully", book });
+      res.status(201).json({ message: "book uploaded", book });
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Book upload failed", details: error.message });
+      res.status(500).json({ error: "upload failed", details: error.message });
     }
   },
 ];
@@ -25,26 +23,30 @@ exports.uploadBook = [
 exports.addHighlight = async (req, res) => {
   try {
     const bookId = req.params.bookId;
-    const { chapter, paragraphIndex, startOffset, endOffset, text } = req.body;
+    const {
+      chapter,
+      paragraphIndex,
+      startOffset: startOfHighlight,
+      endOffset: endOfHighlight,
+      text,
+    } = req.body;
     const highlight = new Highlight({
       book: bookId,
       chapter,
       paragraphIndex,
-      startOffset,
-      endOffset,
+      startOffset: startOfHighlight,
+      endOffset: endOfHighlight,
       text,
     });
     await highlight.save();
     await Book.findByIdAndUpdate(bookId, {
       $push: { highlights: highlight._id },
     });
-    res
-      .status(201)
-      .json({ message: "Highlight added successfully", highlight });
+    res.status(201).json({ message: "Highlight added in db", highlight });
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Highlight addition failed", details: error.message });
+      .json({ error: "Highlight adding failed", details: error.message });
   }
 };
 
@@ -53,12 +55,13 @@ exports.getHighlights = async (req, res) => {
     const highlights = await Highlight.find({ book: req.params.bookId });
     res.status(200).json(highlights);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch highlights", details: error.message });
+    res.status(500).json({
+      error: "can't fetch highlights from db",
+      details: error.message,
+    });
   }
 };
-// Get all books for authenticated user
+
 exports.getBooks = async (req, res) => {
   try {
     const books = await Book.find({ user: req.user._id });
@@ -66,7 +69,7 @@ exports.getBooks = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to fetch books", details: error.message });
+      .json({ error: "failed to get books from dbs", details: error.message });
   }
 };
 
@@ -74,18 +77,16 @@ exports.getBookById = async (req, res) => {
   try {
     const book = await Book.findById(req.params.bookId);
     if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "book not found" });
     }
     if (book.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to access this book" });
+      return res.status(403).json({ error: "can't acces this book" });
     }
     res.json(book);
   } catch (error) {
-    console.error("Error fetching book:", error);
+    console.error("can't fetch book from db", error);
     res
       .status(500)
-      .json({ error: "Error fetching book", details: error.message });
+      .json({ error: "error while fetching book", details: error.message });
   }
 };
